@@ -1,22 +1,18 @@
-defmodule DaysFinder do
-  def finder do
-    month = IO.gets("Enter month (1-12): ") |> String.trim() |> String.to_integer()
+defmodule DayFinder do
+  defstruct [:year, :month]
+  def finder() do
     year = IO.gets("Enter year: ") |> String.trim() |> String.to_integer()
-
-    last_thursday = get_last_thursday(year, month)
-    IO.puts("Last Thursday of #{month}/#{year} is on: #{Date.to_string(last_thursday)}")
+    month = IO.gets("Enter month: ") |> String.trim() |> String.to_integer()
+    last_day = :calendar.last_day_of_the_month(year, month)
+    last_thursday = Enum.find(last_day..1//-1, fn day ->
+      {:ok, date} = Date.new(year, month, day)
+      Date.day_of_week(date) == 4
+    end)
+    IO.puts("Last Thursday is on: #{year}-#{pad(month)}-#{pad(last_thursday)}")
   end
 
-  def get_last_thursday(year, month) do
-    last_day = Date.new!(year, month, :calendar.last_day_of_the_month(year, month))
-    find_last_thursday(last_day)
-  end
-
-  defp find_last_thursday(date) do
-    if Date.day_of_week(date) == 4 do
-      date
-    else
-      find_last_thursday(Date.add(date, -1))
-    end
-  end
+  defp pad(n) when n < 10, do: "0#{n}"
+  defp pad(n), do: "#{n}"
 end
+
+DayFinder.finder()
