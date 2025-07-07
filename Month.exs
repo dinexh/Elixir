@@ -16,3 +16,4 @@ defmodule DayFinder do
 end
 
 DayFinder.finder()
+
